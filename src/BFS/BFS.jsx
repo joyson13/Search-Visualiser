@@ -5,6 +5,8 @@ export default class BFS extends React.Component {
   constructor(props) {
     super(props);
 
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+
     this.state = {
       hexSize: 20,
       hexOrigin: { x: 30, y: 30 },
@@ -23,6 +25,9 @@ export default class BFS extends React.Component {
     const { canvasWidth, canvasHeight } = this.state.canvasSize;
     this.canvasHex.width = canvasWidth;
     this.canvasHex.height = canvasHeight;
+    this.canvasInteraction.width = canvasWidth;
+    this.canvasInteraction.height = canvasHeight;
+    this.getCanvasPosition(this.canvasInteraction);
     this.drawHexes();
   }
 
@@ -147,10 +152,35 @@ export default class BFS extends React.Component {
     return { hexWidth, hexHeight, vertDist, horizDist };
   }
 
+  handleMouseMove(e) {
+    const { left, right, top, bottom } = this.state.canvasPosition;
+    console.log(e.pageX, e.pageY);
+    let offsetX = e.pageX - left;
+    let offsetY = e.pageY - top;
+  }
+
+  getCanvasPosition(canvasID) {
+    let rect = canvasID.getBoundingClientRect();
+    this.setState({
+      canvasPosition: {
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+      },
+    });
+  }
+
   render() {
     return (
       <div className="BFS">
         <canvas ref={(canvasHex) => (this.canvasHex = canvasHex)}></canvas>
+        <canvas
+          ref={(canvasInteraction) =>
+            (this.canvasInteraction = canvasInteraction)
+          }
+          onMouseMove={this.handleMouseMove}
+        ></canvas>
       </div>
     );
   }
